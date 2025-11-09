@@ -14,10 +14,10 @@ export { default as Scaffold } from './scaffold/Scaffold';
 
 /**
  * Type definition for configuring the StatusBar within the Scaffold.
- * 
+ *
  * Allows developers to customize the native status bar or build completely custom status bars
  * with animations, gradients, images, and more.
- * 
+ *
  * @example
  * ```tsx
  * import { type StatusBarProps } from '@lokeshmarathi/scaffold';
@@ -34,14 +34,14 @@ export type { StatusBarProps } from './scaffold/types/statusBar';
 
 /**
  * Type definition for configuring the AppBar within the Scaffold.
- * 
+ *
  * Provides a highly flexible and unrestricted way to build app bars with:
  * - Leading section (left side) with backIcon, title, and subtitle
  * - Center section (custom content)
  * - Trailing section (right side) with custom content
  * - Full RTL/LTR support for internationalization
  * - Custom backgrounds, animations, theming, and platform-specific overrides
- * 
+ *
  * @example
  * ```tsx
  * import { type AppBarProps } from '@lokeshmarathi/scaffold';
@@ -60,3 +60,40 @@ export type { StatusBarProps } from './scaffold/types/statusBar';
  * ```
  */
 export type { AppBarProps } from './scaffold/types/appBar';
+
+/**
+ * Type definition for configuring the Body (main content area) within the Scaffold.
+ *
+ * Provides complete control over the body/content area with:
+ * - Scrollable or non-scrollable layouts
+ * - Custom scroll indicators and animations
+ * - Custom backgrounds (colors, gradients, images)
+ * - Full layout control (padding, margin, flex, gap)
+ * - Shadows, elevation, and borders
+ * - Theme adaptation (dark/light mode)
+ * - Custom body renderers for complete control
+ * - Platform-specific overrides (iOS/Android)
+ *
+ * @example
+ * ```tsx
+ * import { type BodyProps } from '@lokeshmarathi/scaffold';
+ *
+ * const bodyConfig: BodyProps = {
+ *   scrollEnabled: true,
+ *   paddingHorizontal: 16,
+ *   paddingVertical: 12,
+ *   backgroundColor: '#f5f5f5',
+ *   renderCustomScrollIndicator: ({ scrollPosition, indicatorHeight }) => (
+ *     <Animated.View
+ *       style={{
+ *         height: indicatorHeight,
+ *         backgroundColor: '#007AFF',
+ *         transform: [{ translateY: scrollPosition }],
+ *       }}
+ *     />
+ *   ),
+ *   view: <YourContent />,
+ * };
+ * ```
+ */
+export type { BodyProps } from './scaffold/types/body';
