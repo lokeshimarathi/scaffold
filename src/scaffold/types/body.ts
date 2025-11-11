@@ -135,73 +135,8 @@ export type BodyProps = {
   };
 
   // -----------------------------------------------------------------------
-  // SCROLL & OVERFLOW
+  // OVERFLOW
   // -----------------------------------------------------------------------
-
-  /**
-   * Whether to enable scrolling for the body
-   * If true, wraps content in ScrollView
-   * @default false
-   */
-  scrollEnabled?: boolean;
-
-  /**
-   * Scroll view config options
-   */
-  scrollConfig?: {
-    bounces?: boolean;
-    scrollEventThrottle?: number;
-    showsVerticalScrollIndicator?: boolean;
-    showsHorizontalScrollIndicator?: boolean;
-    horizontal?: boolean;
-  };
-
-  /**
-   * Custom scroll indicator renderer
-   * Allows developers to build their own scroll bar UI
-   * Receives scroll position and content dimensions
-   *
-   * @example
-   * ```tsx
-   * renderCustomScrollIndicator={(props) => (
-   *   <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 8 }}>
-   *     <Animated.View
-   *       style={{
-   *         height: props.indicatorHeight,
-   *         backgroundColor: '#007AFF',
-   *         borderRadius: 4,
-   *         transform: [{ translateY: props.scrollPosition }],
-   *       }}
-   *     />
-   *   </View>
-   * )}
-   * ```
-   */
-  renderCustomScrollIndicator?: (props: {
-    scrollPosition: any; // Animated.Value | Reanimated.SharedValue | number
-    indicatorHeight: number;
-    contentHeight: number;
-    scrollViewHeight: number;
-    scrollPercentage: number;
-  }) => React.ReactNode;
-
-  /**
-   * Animated scroll value to connect with external animations
-   * Useful for parallax effects, collapsible headers, etc.
-   * Accepts Animated.Value or Reanimated SharedValue
-   *
-   * @example
-   * ```tsx
-   * const scrollAnim = useRef(new Animated.Value(0)).current;
-   *
-   * body={{
-   *   scrollEnabled: true,
-   *   animatedScrollValue: scrollAnim,
-   *   view: <YourContent />,
-   * }}
-   * ```
-   */
-  animatedScrollValue?: any; // Animated.Value | Reanimated.SharedValue
 
   /**
    * Overflow behavior
@@ -275,22 +210,16 @@ export type BodyProps = {
    * @example
    * ```tsx
    * renderCustomBody={(props) => (
-   *   <Animated.View style={{
+   *   <View style={{
    *     flex: 1,
    *     backgroundColor: props.backgroundColor,
    *   }}>
-   *     <CustomScrollIndicator scrollPosition={props.scrollPosition} />
    *     <MyComplexLayout />
-   *   </Animated.View>
+   *   </View>
    * )}
    * ```
    */
-  renderCustomBody?: (props: {
-    backgroundColor?: string;
-    scrollPosition?: any; // Animated.Value | Reanimated.SharedValue | number
-    contentHeight?: number;
-    viewportHeight?: number;
-  }) => React.ReactNode;
+  renderCustomBody?: (props: { backgroundColor?: string }) => React.ReactNode;
 
   // -----------------------------------------------------------------------
   // STYLING & CUSTOMIZATION
@@ -351,16 +280,6 @@ export type BodyProps = {
    */
   onLayout?: (event: any) => void;
 
-  /**
-   * Called on scroll (only if scrollEnabled is true)
-   */
-  onScroll?: (event: any) => void;
-
-  /**
-   * Called when scroll ends
-   */
-  onScrollEnd?: (event: any) => void;
-
   // -----------------------------------------------------------------------
   // ANIMATION & DYNAMICS
   // -----------------------------------------------------------------------
@@ -402,12 +321,9 @@ export type ResolvedBodyProps = Required<
     | 'ios'
     | 'android'
     | 'shadow'
-    | 'scrollConfig'
     | 'view'
     | 'backgroundView'
     | 'containerStyle'
     | 'onLayout'
-    | 'onScroll'
-    | 'onScrollEnd'
   >
 >;

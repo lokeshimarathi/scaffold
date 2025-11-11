@@ -79,19 +79,9 @@ export type { AppBarProps } from './scaffold/types/appBar';
  * import { type BodyProps } from '@lokeshmarathi/scaffold';
  *
  * const bodyConfig: BodyProps = {
- *   scrollEnabled: true,
  *   paddingHorizontal: 16,
  *   paddingVertical: 12,
  *   backgroundColor: '#f5f5f5',
- *   renderCustomScrollIndicator: ({ scrollPosition, indicatorHeight }) => (
- *     <Animated.View
- *       style={{
- *         height: indicatorHeight,
- *         backgroundColor: '#007AFF',
- *         transform: [{ translateY: scrollPosition }],
- *       }}
- *     />
- *   ),
  *   view: <YourContent />,
  * };
  * ```

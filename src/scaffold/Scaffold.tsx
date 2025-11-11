@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,7 @@ import {
   Platform,
   useColorScheme,
   I18nManager,
-  ScrollView,
-  Animated,
+  KeyboardAvoidingView,
 } from 'react-native';
 import type { ScaffoldProps } from './types/scaffold';
 
@@ -24,10 +23,6 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
     RNStatusBar.currentHeight || 0
   );
   const [appBarHeight, setAppBarHeight] = useState(appBar?.height || 56);
-  const [bodyHeight, setBodyHeight] = useState(0);
-  const [contentHeight, setContentHeight] = useState(0);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const scrollAnim = useRef(new Animated.Value(0)).current;
 
   // Get platform-specific config for StatusBar
   const getPlatformStatusBarConfig = useCallback(() => {
@@ -187,44 +182,7 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
 
   const handleBodyLayout = useCallback(
     (event: any) => {
-      const height = event.nativeEvent.layout.height;
-      setBodyHeight(height);
       platformBodyConfig.onLayout?.(event);
-    },
-    [platformBodyConfig]
-  );
-
-  const handleScrollEvent = useCallback(
-    (event: any) => {
-      const scrollY = event.nativeEvent.contentOffset.y;
-      const indicatorHeight =
-        bodyHeight > 0 && contentHeight > 0
-          ? (bodyHeight / contentHeight) * bodyHeight
-          : 0;
-      const maxScroll = Math.max(contentHeight - bodyHeight, 0);
-      const scrollPercentage = maxScroll > 0 ? (scrollY / maxScroll) * 100 : 0;
-      const indicatorPosition =
-        maxScroll > 0
-          ? (scrollY / maxScroll) * (bodyHeight - indicatorHeight)
-          : 0;
-
-      // Update the scroll position state
-      setScrollPosition(indicatorPosition);
-      scrollAnim.setValue(indicatorPosition);
-
-      platformBodyConfig.onScroll?.({
-        ...event,
-        scrollPercentage,
-        indicatorHeight,
-        indicatorPosition,
-      });
-    },
-    [platformBodyConfig, bodyHeight, contentHeight, scrollAnim]
-  );
-
-  const handleScrollEndEvent = useCallback(
-    (event: any) => {
-      platformBodyConfig.onScrollEnd?.(event);
     },
     [platformBodyConfig]
   );
@@ -267,9 +225,11 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
         <View
           style={[
             styles.customStatusBarContainer,
-            { height: statusBarHeightValue },
+            {
+              height: statusBarHeightValue,
+              zIndex: platformStatusBarConfig.zIndex || 100,
+            },
             platformStatusBarConfig.containerStyle,
-            { zIndex: platformStatusBarConfig.zIndex || 100 },
           ]}
           onLayout={(event) => {
             handleStatusBarLayout(event.nativeEvent.layout.height);
@@ -299,10 +259,10 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
             height: statusBarHeightValue,
             backgroundColor: finalStatusBarBgColor,
             justifyContent: alignMap[contentAlign] || 'center',
+            zIndex: platformStatusBarConfig.zIndex || 100,
           },
           platformStatusBarConfig.elevated && styles.elevated,
           platformStatusBarConfig.containerStyle,
-          { zIndex: platformStatusBarConfig.zIndex || 100 },
         ]}
         onLayout={(event) => {
           handleStatusBarLayout(event.nativeEvent.layout.height);
@@ -353,7 +313,7 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
             )}
 
             {leading.subTitle && (
-              <View style={styles.appBarSubtitleContainer}>
+              <View>
                 {typeof leading.subTitle === 'string' ? (
                   <Text
                     style={[
@@ -447,10 +407,10 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
               justifyMap[
                 platformAppBarConfig.horizontalJustification || 'space-between'
               ] || 'space-between',
+            zIndex: platformAppBarConfig.zIndex || 1000,
           },
           platformAppBarConfig.elevated && styles.appBarElevated,
           platformAppBarConfig.containerStyle,
-          { zIndex: platformAppBarConfig.zIndex || 1000 },
         ]}
         onLayout={(event) => {
           handleAppBarLayout(event.nativeEvent.layout.height);
@@ -466,7 +426,7 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
         {/* AppBar Content */}
         <View
           style={[
-            styles.appBarContentContainer,
+            styles.appBarContent,
             {
               flexDirection: flexDirection,
               gap: platformAppBarConfig.gap || 0,
@@ -499,121 +459,12 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
         <View style={styles.bodyContainer} onLayout={handleBodyLayout}>
           {platformBodyConfig.renderCustomBody({
             backgroundColor: finalBodyBgColor,
-            scrollPosition: scrollAnim,
-            contentHeight,
-            viewportHeight: bodyHeight,
           })}
         </View>
       );
     }
 
-    // Scrollable body
-    if (platformBodyConfig.scrollEnabled) {
-      return (
-        <View
-          style={[
-            styles.bodyContainer,
-            {
-              backgroundColor: finalBodyBgColor,
-              paddingHorizontal: platformBodyConfig.paddingHorizontal,
-              paddingVertical: platformBodyConfig.paddingVertical,
-              paddingTop: platformBodyConfig.paddingTop,
-              paddingBottom: platformBodyConfig.paddingBottom,
-              paddingLeft: platformBodyConfig.paddingLeft,
-              paddingRight: platformBodyConfig.paddingRight,
-              margin: platformBodyConfig.margin,
-              marginHorizontal: platformBodyConfig.marginHorizontal,
-              marginVertical: platformBodyConfig.marginVertical,
-              borderRadius: platformBodyConfig.borderRadius,
-              borderColor: platformBodyConfig.borderColor,
-              borderWidth: platformBodyConfig.borderWidth,
-              overflow: platformBodyConfig.overflow as any,
-              opacity: platformBodyConfig.opacity,
-              zIndex: platformBodyConfig.zIndex,
-            },
-            platformBodyConfig.elevated && styles.bodyElevated,
-            platformBodyConfig.containerStyle,
-          ]}
-          onLayout={handleBodyLayout}
-        >
-          {platformBodyConfig.backgroundView && (
-            <View style={StyleSheet.absoluteFillObject}>
-              {platformBodyConfig.backgroundView}
-            </View>
-          )}
-
-          <ScrollView
-            scrollEnabled={platformBodyConfig.scrollEnabled}
-            bounces={platformBodyConfig.scrollConfig?.bounces}
-            scrollEventThrottle={
-              platformBodyConfig.scrollConfig?.scrollEventThrottle || 16
-            }
-            showsVerticalScrollIndicator={
-              platformBodyConfig.scrollConfig?.showsVerticalScrollIndicator !==
-              false
-            }
-            showsHorizontalScrollIndicator={
-              platformBodyConfig.scrollConfig?.showsHorizontalScrollIndicator
-            }
-            horizontal={platformBodyConfig.scrollConfig?.horizontal}
-            onScroll={
-              platformBodyConfig.animatedScrollValue
-                ? Animated.event(
-                    [
-                      {
-                        nativeEvent: {
-                          contentOffset: {
-                            y: platformBodyConfig.animatedScrollValue,
-                          },
-                        },
-                      },
-                    ],
-                    {
-                      useNativeDriver: false,
-                      listener: handleScrollEvent,
-                    }
-                  )
-                : handleScrollEvent
-            }
-            onScrollEndDrag={handleScrollEndEvent}
-            onContentSizeChange={(_w, h) => setContentHeight(h)}
-            style={[
-              styles.scrollViewContainer,
-              {
-                flexDirection: platformBodyConfig.flexDirection,
-                gap: platformBodyConfig.gap,
-              },
-            ]}
-            contentContainerStyle={{
-              justifyContent: platformBodyConfig.justifyContent,
-              alignItems: platformBodyConfig.alignItems,
-            }}
-          >
-            {platformBodyConfig.view}
-          </ScrollView>
-
-          {/* Custom scroll indicator */}
-          {platformBodyConfig.renderCustomScrollIndicator &&
-            bodyHeight > 0 &&
-            contentHeight > 0 && (
-              <View style={styles.customScrollIndicatorContainer}>
-                {platformBodyConfig.renderCustomScrollIndicator({
-                  scrollPosition: scrollPosition,
-                  indicatorHeight: Math.max(
-                    (bodyHeight / contentHeight) * bodyHeight,
-                    20
-                  ),
-                  contentHeight,
-                  scrollViewHeight: bodyHeight,
-                  scrollPercentage: 0,
-                })}
-              </View>
-            )}
-        </View>
-      );
-    }
-
-    // Non-scrollable body
+    // Body
     return (
       <View
         style={[
@@ -659,38 +510,54 @@ const Scaffold: React.FC<ScaffoldProps> = ({ statusBar, appBar, body }) => {
   // StatusBar hidden
   if (platformStatusBarConfig.hidden) {
     return (
-      <View style={[styles.container, styles.flexContainer]}>
-        <RNStatusBar hidden={true} />
-        {renderAppBar()}
-        {renderBodyContent()}
-      </View>
+      <>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.fullFlex}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+        >
+          <View style={styles.container}>
+            <RNStatusBar hidden={true} />
+            {renderAppBar()}
+            {renderBodyContent()}
+          </View>
+        </KeyboardAvoidingView>
+      </>
     );
   }
 
   return (
-    <View style={[styles.container, styles.flexContainer]}>
-      {/* Native Status Bar Configuration */}
-      <RNStatusBar
-        hidden={false}
-        translucent={platformStatusBarConfig.translucent || false}
-        backgroundColor={
-          platformStatusBarConfig.translucent
-            ? 'transparent'
-            : finalStatusBarBgColor
-        }
-        barStyle={finalStatusBarStyle}
-        animated={platformStatusBarConfig.animatedVisibility || false}
-      />
+    <>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.fullFlex}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+      >
+        <View style={styles.container}>
+          {/* Native Status Bar Configuration */}
+          <RNStatusBar
+            hidden={false}
+            translucent={platformStatusBarConfig.translucent || false}
+            backgroundColor={
+              platformStatusBarConfig.translucent
+                ? 'transparent'
+                : finalStatusBarBgColor
+            }
+            barStyle={finalStatusBarStyle}
+            animated={platformStatusBarConfig.animatedVisibility || false}
+          />
 
-      {/* Custom Status Bar Background & Content */}
-      {renderStatusBarBackground()}
+          {/* Custom Status Bar Background & Content */}
+          {renderStatusBarBackground()}
 
-      {/* App Bar */}
-      {renderAppBar()}
+          {/* App Bar */}
+          {renderAppBar()}
 
-      {/* Body Content */}
-      {renderBodyContent()}
-    </View>
+          {/* Body Content */}
+          {renderBodyContent()}
+        </View>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
@@ -698,6 +565,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+  },
+  topSafeAreaView: {
+    flex: 0,
+    backgroundColor: '#ffffff',
+  },
+  safeAreaView: {
+    backgroundColor: '#ffffff',
+  },
+  fullFlex: {
+    flex: 1,
   },
   defaultStatusBarContainer: {
     width: '100%',
@@ -729,6 +606,9 @@ const styles = StyleSheet.create({
   },
   customAppBarContainer: {
     width: '100%',
+  },
+  appBarContent: {
+    flex: 1,
   },
   appBarLeadingContainer: {
     flexDirection: 'row',
@@ -768,14 +648,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
   },
-  customScrollIndicatorContainer: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: '100%',
-    pointerEvents: 'none',
-  },
+
   bodyElevated: {
     shadowColor: '#000',
     shadowOffset: {
@@ -785,18 +658,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
-  },
-  flexContainer: {
-    flex: 1,
-  },
-  appBarSubtitleContainer: {
-    marginTop: 0,
-  },
-  appBarContentContainer: {
-    flex: 1,
-  },
-  scrollViewContainer: {
-    flex: 1,
   },
 });
 
