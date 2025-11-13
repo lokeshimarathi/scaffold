@@ -87,3 +87,75 @@ export type { AppBarProps } from './scaffold/types/appBar';
  * ```
  */
 export type { BodyProps } from './scaffold/types/body';
+
+/**
+ * Type definition for configuring the BottomNavigationBar within the Scaffold.
+ *
+ * Provides complete control over the bottom navigation bar with:
+ * - Visibility control and height customization
+ * - Custom backgrounds and elevation
+ * - Flexible layout (padding, gap, alignment)
+ * - Theme adaptation (dark/light mode)
+ * - Custom renderers for complete control
+ * - Platform-specific overrides (iOS/Android)
+ *
+ * @example
+ * ```tsx
+ * import { type BottomNavigationBarProps } from '@lokeshmarathi/scaffold';
+ *
+ * const bottomNavConfig: BottomNavigationBarProps = {
+ *   height: 60,
+ *   backgroundColor: '#ffffff',
+ *   elevated: true,
+ *   children: <NavigationButtons />,
+ * };
+ * ```
+ */
+export type { BottomNavigationBarProps } from './scaffold/types/bottomNavigationBar';
+
+/**
+ * Type definition for configuring the FloatingActionButton within the Scaffold.
+ *
+ * @example
+ * ```tsx
+ * import { type FloatingActionButtonProps } from '@lokeshmarathi/scaffold';
+ *
+ * const fabConfig: FloatingActionButtonProps = {
+ *   icon: <Icon name="add" />,
+ *   backgroundColor: '#007AFF',
+ *   onPress: () => console.log('FAB pressed'),
+ * };
+ * ```
+ */
+export type { FloatingActionButtonProps } from './scaffold/types/floatingActionButton';
+
+/**
+ * Type definition for configuring the BottomSheet within the Scaffold.
+ *
+ * @example
+ * ```tsx
+ * import { type BottomSheetProps } from '@lokeshmarathi/scaffold';
+ *
+ * const bottomSheetConfig: BottomSheetProps = {
+ *   visible: true,
+ *   onClose: () => setVisible(false),
+ *   children: <YourContent />,
+ * };
+ * ```
+ */
+export type { BottomSheetProps } from './scaffold/types/bottomSheet';
+
+/**
+ * Type definition for configuring the TopNavigationBar within the Scaffold.
+ *
+ * @example
+ * ```tsx
+ * import { type TopNavigationBarProps } from '@lokeshmarathi/scaffold';
+ *
+ * const topNavConfig: TopNavigationBarProps = {
+ *   tabs: [{ id: 1, label: 'Home' }, { id: 2, label: 'Profile' }],
+ *   activeTabId: 1,
+ * };
+ * ```
+ */
+export type { TopNavigationBarProps } from './scaffold/types/topNavigationBar';

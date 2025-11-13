@@ -18,6 +18,10 @@
 import type { StatusBarProps } from './statusBar';
 import type { AppBarProps } from './appBar';
 import type { BodyProps } from './body';
+import type { BottomNavigationBarProps } from './bottomNavigationBar';
+import type { FloatingActionButtonProps } from './floatingActionButton';
+import type { BottomSheetProps } from './bottomSheet';
+import type { TopNavigationBarProps } from './topNavigationBar';
 
 /**
  * Props for the Scaffold component.
@@ -177,4 +181,32 @@ export type ScaffoldProps = {
    * @see {@link BodyProps} for all available options
    */
   body?: BodyProps;
+
+  /**
+   * Configuration for the bottom navigation bar.
+   *
+   * @see {@link BottomNavigationBarProps} for all available options
+   */
+  bottomNavigationBar?: BottomNavigationBarProps;
+
+  /**
+   * Configuration for the floating action button.
+   *
+   * @see {@link FloatingActionButtonProps} for all available options
+   */
+  floatingActionButton?: FloatingActionButtonProps;
+
+  /**
+   * Configuration for the bottom sheet.
+   *
+   * @see {@link BottomSheetProps} for all available options
+   */
+  bottomSheet?: BottomSheetProps;
+
+  /**
+   * Configuration for the top navigation bar.
+   *
+   * @see {@link TopNavigationBarProps} for all available options
+   */
+  topNavigationBar?: TopNavigationBarProps;
 };

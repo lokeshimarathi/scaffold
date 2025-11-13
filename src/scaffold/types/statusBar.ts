@@ -1,13 +1,9 @@
-import type {
-  StatusBarStyle,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import type { StatusBarStyle, ViewStyle, TextStyle } from 'react-native';
 import type { Animated } from 'react-native';
 
 /**
  * Comprehensive StatusBar configuration for the Scaffold framework.
- * 
+ *
  * Supports both native status bar styling AND fully custom status bar implementations.
  * Developers can use native-only props, custom-only props, or a combination of both.
  *
@@ -15,7 +11,7 @@ import type { Animated } from 'react-native';
  * ```tsx
  * // Native status bar only
  * <Scaffold statusBar={{ style: 'dark-content', backgroundColor: '#fff' }} />
- * 
+ *
  * // Custom status bar with gradient
  * <Scaffold
  *   statusBar={{
@@ -24,7 +20,7 @@ import type { Animated } from 'react-native';
  *     ),
  *   }}
  * />
- * 
+ *
  * // Custom with content
  * <Scaffold
  *   statusBar={{
@@ -165,7 +161,7 @@ export type StatusBarProps = {
    * Custom React node to render inside the status bar area.
    * Allows developers to place text, icons, buttons, or any UI elements
    * within the safe-area region of the status bar.
-   * 
+   *
    * When provided, content is rendered inside the default background container.
    * For complete control over background, use `renderCustomStatusBar` instead.
    *
